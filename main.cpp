@@ -2,75 +2,55 @@
 #include <sstream>
 using namespace std;
 
-bool proverka_mat(int mat[n][k]){
-    bool result=true;
-    for(int i=0; i<n; ++i){
+bool proverka_mat(float mat[][]){
+    bool f=1;
+    string stroka;
+    getline(cin,stroka);
+    istringstream stream(stroka);
+    unsigned int a;
+    unsigned int b;
+    stream>>a;
+    stream.ignore( numeric_limits<streamsize>::max(), ',' );
+    stream>>b;
+    float **mat=new float*[a];
+    for(int i=0; i<a; ++i){
         string stroka;
-        getline(cin, stroka);
+        getline(cin,stroka);
         istringstream stream(stroka);
-        for(int j=0; j<k; ++j){
+        matrix[i]=new float[b];
+        for(int j=0; j<b; ++j){
             if(!(stream>>mat[i][j])){
-                result=false;
-                break;
+                f=0; break;
             }
         }
-        if(!(result)){break;}
+        if(!f){break;}
     }
-    return result;
+    return f;
 }
 
 int main()
 {
-    int n, k;
-    cin>>n; cin>>k;
-    int mat[n][k];
+    float mat[][];
     if(proverka_mat(mat)){
         char op;
         cin>>op;
-        if(op=="+"){
+        if(op=='+'){
             int n1, k1;
             cin>>n1; cin>>k1;
-            int mat[n1][k1];
-            if(proverka_mat(mat1)){
+            int mat1[n1][k1];
+            if(proverka_mat(n1, k1, mat1)){
                 cout<<endl;
-                for(int i=0; i<n1; ++i){
-                    for(int j=0; j<k1; ++j){
-                        cout<<(mat1[i][j]+mat2[i][j])<<" ";
-                    }
-                    cout<<endl;
-                }
-            }
-            else{
-                cout<<"An error has occured while reading input data"<<endl;
-                return -1;
-            }
-        }
-        if(op=="-"){
-            if(proverka_mat(mat2)){
-                cout<<endl;
-                for(int i=0; i<3; ++i){
-                    for(int j=0; j<3; ++j){
-                        cout<<(mat1[i][j]-mat2[i][j])<<" ";
-                    }
-                    cout<<endl;
-                }
-            }
-            else{
-                cout<<"An error has occured while reading input data"<<endl;
-                return -1;
-            }
-        }
-        if(op=="*"){
-            if(proverka_mat(mat2)){
-                cout<<endl;
-                for(int i=0; i<3; ++i){
-                    for(int j=0; j<3; ++j){
-                        int result_op=0;
-                        for(int k=0; k<3; ++k){
-                            result_op+=mat1[i][k]*mat2[k][j];
+                if((n==n1)&&(k==k1)){
+                    for(int i=0; i<n; ++i){
+                        for(int j=0; j<k; ++j){
+                            cout<<(mat[i][j]+mat1[i][j])<<" ";
                         }
-                        cout<<result_op<<" ";
+                        cout<<endl;
                     }
+                }
+                else{
+                    cout<<"An error has occured while reading input data"<<endl;
+                    return -1;
                 }
             }
             else{
@@ -78,7 +58,65 @@ int main()
                 return -1;
             }
         }
-        
+        if(op=='-'){
+            int n1, k1;
+            cin>>n1; cin>>k1;
+            int mat1[n1][k1];
+            if(proverka_mat(n1, k1, mat1)){
+                cout<<endl;
+                if((n==n1)&&(k==k1)){
+                    for(int i=0; i<n; ++i){
+                        for(int j=0; j<k; ++j){
+                            cout<<(mat[i][j]-mat1[i][j])<<" ";
+                        }
+                        cout<<endl;
+                    }
+                }
+                else{
+                    cout<<"An error has occured while reading input data"<<endl;
+                    return -1;
+                }
+            }
+            else{
+                cout<<"An error has occured while reading input data"<<endl;
+                return -1;
+            }
+        }
+        if(op=='*'){
+            int n1, k1;
+            cin>>n1; cin>>k1;
+            int mat1[n1][k1];
+            if(proverka_mat(n1, k1, mat1)){
+                cout<<endl;
+                if(k==n1){
+                    for(int i=0; i<n; ++i){
+                        for(int j=0; j<k; ++j){
+                            int result_op=0;
+                            for(int l=0; l<n1; ++l){
+                                result_op+=mat[i][l]*mat1[l][j];
+                            }
+                            cout<<result_op<<" ";
+                        }
+                    }
+                }
+                else{
+                    cout<<"An error has occured while reading input data"<<endl;
+                    return -1;
+                }
+            }
+            else{
+                cout<<"An error has occured while reading input data"<<endl;
+                return -1;
+            }
+        }
+        if(op=='T'){
+            for(int i=0; i<n; ++i){
+                for(int j=0; j<k; ++j){
+                    cout<<mat[j][i]<<" ";
+                }
+                cout<<endl;
+            }
+        }  
     }
     else{
         cout<<"An error has occured while reading input data"<<endl;
