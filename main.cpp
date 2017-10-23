@@ -1,14 +1,16 @@
 #include <iostream>
 #include <sstream>
+#include <string>
 
 using namespace std;
 
 int main(){
     unsigned int rows1, columns1;
     string stroka; char znak1;
+    getline(cin, stroka);
     istringstream stream(stroka);
     if((stream>>rows1)&&(stream>>znak1)&&(stream>>columns1)){
-        float **m1=new float *[rows1];
+        float **m1=new float* [rows1];
         for(unsigned int i=0; i<rows1; ++i){
             m1[i]=new float[columns1];
             for(unsigned int j=0; j<columns1; ++j){
@@ -37,12 +39,12 @@ int main(){
         unsigned int rows2, columns2;
         char znak2;
         if((stream>>rows2)&&(stream>>znak2)&&(stream>>columns2)){
-            float **m2=new float *[rows2];
+            float **m2=new float* [rows2];
             for(unsigned int i=0; i<rows2; ++i){
                 m2[i]=new float[columns2];
                 for(unsigned int j=0; j<columns2; ++j){
                     m2[i][j]=0.0f;
-               }
+                }
             }
             for(unsigned int i=0; i<rows2; ++i){
                 for(unsigned int j=0; j<columns2; ++j){ 
