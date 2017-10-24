@@ -102,6 +102,17 @@ int main(){
                 cout<<endl;
             }
         }
-        if
     }
+    if((op=='T')||(op=='R')){
+        if(op=='T'){
+            cout<<endl;
+            for(unsigned int j=0; j<columns1; ++j){
+                for(unsigned int i=0; i<rows1; ++i){
+                    cout<<m1[i][j]<<" ";
+                }
+                cout<<endl;
+            }
+        }
+    }
+    return 0;
 }
