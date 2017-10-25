@@ -5,6 +5,7 @@
 using namespace std;
 
 int main(){
+    bool f=0;
     float **m1, **m2;
     unsigned int rows1, columns1;
     char znak1;
@@ -72,6 +73,7 @@ int main(){
             return -4;
         }
         if((op=='+')&&(rows1==rows2)&&(columns1==columns2)){
+            f=1;
             cout<<endl;
             for(unsigned int i=0; i<rows1; ++i){
                 for(unsigned int j=0; j<columns1; ++j){
@@ -81,6 +83,7 @@ int main(){
             }
         }
         if((op=='-')&&(rows1==rows2)&&(columns1==columns2)){
+            f=1;
             cout<<endl;
             for(unsigned int i=0; i<rows1; ++i){
                 for(unsigned int j=0; j<columns1; ++j){
@@ -90,6 +93,7 @@ int main(){
             }
         }
         if((op=='*')&&(columns1==rows2)){
+            f=1;
             cout<<endl;
             for(unsigned int i=0; i<rows1; ++i){
                 for(unsigned int j=0; j<columns2; ++j){
@@ -104,6 +108,7 @@ int main(){
         }
     }
     if((op=='T')||(op=='R')){
+        f=1;
         if(op=='T'){
             cout<<endl;
             for(unsigned int j=0; j<columns1; ++j){
@@ -113,6 +118,61 @@ int main(){
                 cout<<endl;
             }
         }
+        if((op=='R')&&(rows1==columns1)){
+            f=1;
+            cout<<endl;
+            double temp;
+            double **E=new double *[rows1];
+            for (unsigned int i=0; i<rows1; ++i){
+                E[i]=new double [rows1];
+            }
+            for (unsigned int i=0; i<rows1; ++i){
+                for (unsigned int j=0; j<rows1; ++j){
+                    E[i][j]=0.0;
+                    if (i==j){
+                        E[i][j]=1.0;
+                    }
+                }
+            }
+            for (unsigned int k=0; k<rows1; ++k){
+                temp=m1[k][k];
+                for (unsigned int j=0; j<rows1; ++j){
+                    m1[k][j]=E[k][j]/temp;
+                    E[k][j]=E[k][j]/temp;
+                }
+                for (unsigned int i=k+1; i<rows1; ++i){
+                    temp=m1[i][k];
+                    for (unsigned int j=0; j<rows1; ++j){
+                        m1[i][j]=m1[i][j]-(A[k][j]*temp);
+                        E[i][j]=m1[i][j]-(E[k][j]*temp);
+                    }
+                }
+            }
+            for (unsigned int k=rows1-1; k>0; --k){
+                for (unsigned int i=k-1; i>=0; --i){
+                    temp = m1[i][k];
+                    for (unsigned int j=0; j<rows1; ++j){
+                        m1[i][j]=m1[i][j]-(m1[k][j]*temp);
+                        E[i][j]=E[i][j]-(E[k][j]*temp);
+                    }
+                }
+            }
+            for (unsigned int i=0; i<rows1; ++i){
+                for (unsigned int j=0; j<rows1; ++j){
+                    m1[i][j]=E[i][j];
+                }
+            }
+            for(unsigned int i=0; i<rows1; ++i){
+                for(unsigned int j=0; j<columns1; ++j){
+                    cout<<m1[i][j]<<" ";
+                }
+                cout<<endl;
+            }
+        }
+    }
+    if(!f){
+        cout<<"An error has occured while reading input data"<<endl;
+        return -20;
     }
     return 0;
 }
