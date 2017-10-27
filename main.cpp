@@ -68,7 +68,7 @@ bool multiply(float **lhs_elements, unsigned int lhs_rows, unsigned int lhs_colu
     for(unsigned int i=0; i<result_rows; ++i){
         result_elements[i]=new float[result_columns];
         for(unsigned int j=0; j<result_columns; ++j){
-            int result_op=0;
+            float result_op=0;
             for(unsigned int k=0; k<lhs_columns; ++k){
                 result_op+=lhs_elements[i][k]*rhs_elements[k][j];
             }
@@ -90,7 +90,7 @@ bool transpose(float **A, unsigned int rows, unsigned int columns, float ** & re
     return true;
 }
 
-bool reverse(float **A, unsigned int rows, unsigned int columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+bool reverse(float **A, unsigned int rows, unsigned int columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns, bool & f){
     if(rows!=columns){
         return false;
     }
@@ -114,6 +114,10 @@ bool reverse(float **A, unsigned int rows, unsigned int columns, float ** & resu
     }
     for (unsigned int k = 0; k < rows; k++){
         temp = A[k][k];
+        if (temp==0){
+            f=1;
+            return true;
+        }
         for (unsigned int j = 0; j < rows; j++){
             A[k][j] /= temp;
             E[k][j] /= temp;
@@ -215,9 +219,14 @@ int main(){
             break;
         }
         case 'R':{
-            if(!(reverse(lhs_elements, lhs_rows, lhs_columns, result_elements, result_rows, result_columns))){
+            bool f=0;
+            if(!(reverse(lhs_elements, lhs_rows, lhs_columns, result_elements, result_rows, result_columns, f))){
                 cout<<"An error has occured while reading input data"<<endl;
                 return -10;
+            }
+            if(f){
+                cout<<"There is no reverse matrix"<<endl;
+                return -20;
             }
             break;
         }
