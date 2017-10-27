@@ -4,63 +4,101 @@
 
 using namespace std;
 
-bool proverka(float **matrix, unsigned int rows, unsigned int columns){
-    for(unsigned int i=0; i<rows; ++i){
-        string stroka;
-        getline(cin, stroka);
-        istringstream stream(stroka);
-        for(unsigned int j=0; j<columns; ++j){ 
-            if(!(stream>>matrix[i][j])){
-                cout<<"An error has occured while reading input data"<<endl;
-                return false; 
+bool input(float ** & matrix, unsigned int & rows, unsigned int & columns){
+    string RoCo;
+    getline(cin, RoCo);
+    istringstream RC(RoCo);
+    char znak;
+    if((RC>>rows)&&(RC>>znak)&&(znak==',')&&(RC>>columns)){
+        matrix=new float *[rows];
+        for(unsigned int i=0; i<rows; ++i){
+            matrix[i]=new float[columns];
+            string stroka;
+            getline(cin, stroka);
+            istringstream stream(stroka);
+            for(unsigned int j=0; j<columns; ++j){ 
+                if(!(stream>>matrix[i][j])){
+                    return false; 
+                }
             }
+        }
+    }
+    else{
+        return false;
+    }
+    return true;
+}    
+
+bool add(float **lhs_elements, unsigned int lhs_rows, unsigned int lhs_columns, float **rhs_elements, unsigned int rhs_rows, unsigned int rhs_columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+    if(lhs_rows!=rhs_rows || lhs_columns!=rhs_columns){
+        return false;
+    }
+    result_rows=lhs_rows; result_columns=lhs_columns;
+    result_elements=new float *[result_rows];
+    for(unsigned int i=0; i<result_rows; ++i){
+        result_elements[i]=new float[result_columns];
+        for(unsigned int j=0; j<result_columns; ++j){
+            result_elements[i][j]=lhs_elements[i][j]+rhs_elements[i][j];
         }
     }
     return true;
 }
 
-void summa(float **m1, float **m2, float **m_result, unsigned int rows1, unsigned int columns1){
-    cout<<endl;
-    for(unsigned int i=0; i<rows1; ++i){
-        for(unsigned int j=0; j<columns1; ++j){
-            m_result[i][j]=m1[i][j]+m2[i][j];
+bool sub(float **lhs_elements, unsigned int lhs_rows, unsigned int lhs_columns, float **rhs_elements, unsigned int rhs_rows, unsigned int rhs_columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+    if(lhs_rows!=rhs_rows || lhs_columns!=rhs_columns){
+        return false;
+    }
+    result_rows=lhs_rows; result_columns=lhs_columns;
+    result_elements=new float *[result_rows];
+    for(unsigned int i=0; i<result_rows; ++i){
+        result_elements[i]=new float[result_columns];
+        for(unsigned int j=0; j<result_columns; ++j){
+            result_elements[i][j]=lhs_elements[i][j]-rhs_elements[i][j];
         }
     }
+    return true;
 }
 
-void raznost(float **m1, float **m2, float **m_result, unsigned int rows1, unsigned int columns1){
-    cout<<endl;
-    for(unsigned int i=0; i<rows1; ++i){
-        for(unsigned int j=0; j<columns1; ++j){
-            m_result[i][j]=m1[i][j]-m2[i][j];
-        }
+bool multiply(float **lhs_elements, unsigned int lhs_rows, unsigned int lhs_columns, float **rhs_elements, unsigned int rhs_rows, unsigned int rhs_columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+    if(lhs_columns!=rhs_rows){
+        return false;
     }
-}
-
-void umnozhenie(float **m1, float** m2, float **m_result, unsigned int rows1, unsigned int columns1, unsigned int columns2){
-    cout<<endl;
-    for(unsigned int i=0; i<rows1; ++i){
-        for(unsigned int j=0; j<columns2; ++j){
+    result_rows=lhs_rows; result_columns=rhs_columns;
+    result_elements=new float *[result_rows];
+    for(unsigned int i=0; i<result_rows; ++i){
+        result_elements[i]=new float[result_columns];
+        for(unsigned int j=0; j<result_columns; ++j){
             int result_op=0;
-            for(unsigned int k=0; k<columns1; ++k){
-                result_op+=m1[i][k]*m2[k][j];
+            for(unsigned int k=0; k<lhs_columns; ++k){
+                result_op+=lhs_elements[i][k]*rhs_elements[k][j];
             }
-            m_result[i][j]=result_op;
+            result_elements[i][j]=result_op;
         }
     }
+    return true;
 }
 
-void transponirovanie(float **m1, float **m_result, unsigned int rows1, unsigned int columns1){
-    cout<<endl;
-    for(unsigned int j=0; j<columns1; ++j){
-        for(unsigned int i=0; i<rows1; ++i){
-            m_result[j][i]=m1[i][j];
+bool transpose(float **A, unsigned int rows, unsigned int columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+    result_rows=columns; result_columns=rows;
+    result_elements=new float *[result_rows];
+    for(unsigned int i=0; i<result_rows; ++i){
+        result_elements[i]=new float[result_columns];
+        for(unsigned int j=0; j<result_columns; ++j){
+            result_elements[i][j]=A[j][i];
         }
     }
+    return true;
 }
 
-void inversiya(float **A, float **m_result, unsigned int rows)
-{
+bool reverse(float **A, unsigned int rows, unsigned int columns, float ** & result_elements, unsigned int & result_rows, unsigned int & result_columns){
+    if(rows!=columns){
+        return false;
+    }
+    result_rows=rows; result_columns=columns;
+    result_elements=new float *[result_rows];
+    for(unsigned int i=0; i<result_rows; ++i){
+        result_elements[i]=new float[result_columns];
+    }
     float temp;
     float **E = new float *[rows];
     for (unsigned int i = 0; i < rows; i++){
@@ -100,142 +138,97 @@ void inversiya(float **A, float **m_result, unsigned int rows)
     for (unsigned int i = 0; i < rows; i++){
         for (unsigned int j = 0; j < rows; j++){
             A[i][j] = E[i][j];
-            m_result[i][j]=A[i][j];
+            result_elements[i][j]=A[i][j];
         }
     }
+    return true;
+}
+
+void destroy(float **matrix, unsigned int & rows){
+    for(unsigned int i=0; i<rows; ++i){
+        delete[]matrix[i];
+    }
+    delete[]matrix;
 }
 
 int main(){
-    bool f=0;
-    float **m_result;
-    float **m1;
-    unsigned int rows1, columns1;
-    char znak1;
-    string stroka1;
-    getline(cin, stroka1);
-    istringstream stream1(stroka1);
-    if((stream1>>rows1)&&(stream1>>znak1)&&(znak1==',')&&(stream1>>columns1)){
-        m1=new float *[rows1];
-        for(unsigned int i=0; i<rows1; ++i){
-            m1[i]=new float[columns1];
-            for(unsigned int j=0; j<columns1; ++j){
-                m1[i][j]=0.0f;
-            }
-        }
-    }
-    else{
+    float **lhs_elements;
+    unsigned int lhs_rows, lhs_columns;
+    if(!(input(lhs_elements, lhs_rows, lhs_columns))){
         cout<<"An error has occured while reading input data"<<endl;
         return -1;
     }
-    if(proverka(m1, rows1, columns1)){
-        char op;
-        string operat;
-        getline(cin, operat);
-        istringstream stream_op(operat);
-        if((!(stream_op>>op))||((op!='+')&&(op!='-')&&(op!='*')&&(op!='R')&&(op!='T'))){
-            cout<<"An error has occured while reading input data"<<endl;
-            return -2;
-        }
-        if((op=='+')||(op=='-')||(op=='*')){
-            float **m2;
-            unsigned int rows2, columns2;
-            char znak2;
-            string stroka2;
-            getline(cin, stroka2);
-            istringstream stream2(stroka2);
-            if((stream2>>rows2)&&(stream2>>znak2)&&(znak2==',')&&(stream2>>columns2)){
-                m2=new float *[rows2];
-                for(unsigned int i=0; i<rows2; ++i){
-                    m2[i]=new float[columns2];
-                    for(unsigned int j=0; j<columns2; ++j){
-                        m2[i][j]=0.0f;
-                    }
-                }
-            }
-            else{
+    char op;
+    cin>>op;
+    cin.get();
+    if((op!='+')&&(op!='-')&&(op!='*')&&(op!='R')&&(op!='T')){
+        cout<<"An error has occured while reading input data"<<endl;
+        return -2;
+    }
+    float **result_elements;
+    unsigned int result_rows, result_columns;
+    switch(op){
+        case '+':{
+            float **rhs_elements;
+            unsigned int rhs_rows, rhs_columns;
+            if(!(input(rhs_elements, rhs_rows, rhs_columns))){
                 cout<<"An error has occured while reading input data"<<endl;
                 return -3;
             }
-            if(proverka(m2, rows2, columns2)){
-                if((op=='+')&&(rows1==rows2)&&(columns1==columns2)){
-                    f=1;
-                    m_result=new float *[rows1];
-                    for(unsigned int i=0; i<rows1; ++i){
-                        m_result[i]=new float[columns1];
-                        for(unsigned int j=0; j<columns1; ++j){
-                            m_result[i][j]=0.0f;
-                        }
-                    }
-                    summa(m1, m2, m_result, rows1, columns1);
-                }
-                if((op=='-')&&(rows1==rows2)&&(columns1==columns2)){
-                    f=1;
-                    m_result=new float *[rows1];
-                    for(unsigned int i=0; i<rows1; ++i){
-                        m_result[i]=new float[columns1];
-                        for(unsigned int j=0; j<columns1; ++j){
-                            m_result[i][j]=0.0f;
-                        }
-                    }
-                    raznost(m1, m2, m_result, rows1, columns1);
-                }
-                if((op=='*')&&(columns1==rows2)){
-                    f=1;
-                    m_result=new float *[rows1];
-                    for(unsigned int i=0; i<rows1; ++i){
-                        m_result[i]=new float[columns2];
-                        for(unsigned int j=0; j<columns2; ++j){
-                            m_result[i][j]=0.0f;
-                        }
-                    }
-                    umnozhenie(m1, m2, m_result, rows1, columns1, columns2);
-                    columns1=columns2;
-                }
+            if(!(add(lhs_elements, lhs_rows, lhs_columns, rhs_elements, rhs_rows, rhs_columns, result_elements, result_rows, result_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -10;
             }
-            else{
-                return -20;
-            }
+            break;
         }
-        if((op=='T')||(op=='R')){
-            if(op=='T'){
-                f=1;
-                m_result=new float *[columns1];
-                for(unsigned int i=0; i<columns1; ++i){
-                    m_result[i]=new float [rows1];
-                    for(unsigned int j=0; j<rows1; ++j){
-                        m_result[i][j]=0.0f;
-                    }
-                }
-                transponirovanie(m1, m_result, rows1, columns1);
-                unsigned int time=rows1;
-                rows1=columns1;
-                columns1=time;
+        case '-':{
+            float **rhs_elements;
+            unsigned int rhs_rows, rhs_columns;
+            if(!(input(rhs_elements, rhs_rows, rhs_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -3;
             }
-            if((op=='R')&&(rows1==columns1)){
-                f=1;
-                m_result=new float *[rows1];
-                for(unsigned int i=0; i<rows1; ++i){
-                    m_result[i]=new float[rows1];
-                    for(unsigned int j=0; j<rows1; ++j){
-                        m_result[i][j]=0.0f;
-                    }
-                }
-                inversiya(m1, m_result, rows1);
+            if(!(sub(lhs_elements, lhs_rows, lhs_columns, rhs_elements, rhs_rows, rhs_columns, result_elements, result_rows, result_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -10;
             }
+            break;
+        }
+        case '*':{
+            float **rhs_elements;
+            unsigned int rhs_rows, rhs_columns;
+            if(!(input(rhs_elements, rhs_rows, rhs_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -3;
+            }
+            if(!(multiply(lhs_elements, lhs_rows, lhs_columns, rhs_elements, rhs_rows, rhs_columns, result_elements, result_rows, result_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -10;
+            }
+            break;
+        }
+        case 'T':{
+            if(!(transpose(lhs_elements, lhs_rows, lhs_columns, result_elements, result_rows, result_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -10;
+            }
+            break;
+        }
+        case 'R':{
+            if(!(reverse(lhs_elements, lhs_rows, lhs_columns, result_elements, result_rows, result_columns))){
+                cout<<"An error has occured while reading input data"<<endl;
+                return -10;
+            }
+            break;
         }
     }
-    else{
-        return -10;
-    }
-    for(unsigned int i=0; i<rows1; ++i){
-        for(unsigned int j=0; j<columns1; ++j){
-            cout<<m_result[i][j]<<" ";
+    destroy(lhs_elements, lhs_rows);
+    for(unsigned int i=0; i<result_rows; ++i){
+        for(unsigned int j=0; j<result_columns; ++j){
+            cout<<result_elements[i][j]<<" ";
         }
         cout<<endl;
     }
-    if(!f){
-        cout<<"An error has occured while reading input data"<<endl;
-        return -10;
-    }
+    destroy(result_elements, result_rows);
     return 0;
 }
