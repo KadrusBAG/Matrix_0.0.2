@@ -144,7 +144,7 @@ bool reverse(float **A, unsigned int rows, unsigned int columns, float ** & resu
     return true;
 }
 
-void destroy(float **matrix, unsigned int & rows){
+void destroy(float ** & matrix, unsigned int & rows){
     for(unsigned int i=0; i<rows; ++i){
         delete[]matrix[i];
     }
